@@ -1,0 +1,21 @@
+name: "Get FHIR Packages"
+description: "Get FHIR packages from own repository to handle missing snapshots"
+outputs:
+  packages:
+    description: "Extracted packages"
+    value: ${{ steps.packages.outputs.packages }}
+runs:
+  using: composite
+  steps:
+    - run: apt update && apt install git-lfs
+      shell: bash
+    - name: Checkout FHIR packages repository
+      uses: actions/checkout@v3
+      with:
+        repository: cybernop/fhir-packages
+        path: fhir-packages
+        lfs: true
+    - name: Extract packages
+      working-directory: fhir-packages
+      run: ./extract.sh  ~/.fhir/packages
+      shell: bash
